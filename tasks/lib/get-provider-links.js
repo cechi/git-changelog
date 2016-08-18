@@ -14,10 +14,21 @@ function getProviderLinks() {
     bitbucket: {
       issue: '[#%s](' + this.options.repo_url + '/issues/%s)',
       commit: '[%s](' + this.options.repo_url + '/commits/%s)'
-    }
+    },
+    custom: {}
   };
 
-  this.provider = this.options.repo_url.indexOf('github.com') !== -1 ? 'github' :'bitbucket';
+  providerLinks.custom.issue = this.options.issue_url ? '[#%s](' + this.options.issue_url + ')' : null;
+  providerLinks.custom.commit = this.options.commit_url ? '[#%s](' + this.options.commit_url + ')' : null;
+  
+  if (this.options.repo_url.indexOf('github.com') !== -1) {
+    this.provider = 'github';
+  } else if (this.options.repo_url.indexOf('bitbucket.org') !== -1) {
+    this.provider = 'bitbucket';
+  } else {
+    this.provider = 'custom';    
+  }
+
   this.links = providerLinks[this.provider];
 }
 

@@ -4,15 +4,22 @@ var debug = require('debug')('changelog:printSection');
 var format = require('util').format;
 
 function printCommit(stream, printCommitLinks, prefix, commit) {
-  if (printCommitLinks) {
-    stream.write(format('%s %s\n  (%s', prefix, commit.subject, this.linkToCommit(commit.hash)));
+  stream.write(format('%s %s\n', prefix, commit.subject));
 
-    if (commit.closes.length) {
-      stream.write(',\n   ' + commit.closes.map(this.linkToIssue, this).join(', '));
+  if (printCommitLinks) {
+    var links = [];
+
+    if (this.links.commit) {
+      links.push(this.linkToCommit(commit.hash));
+    }  
+    
+    if (this.links.issue && commit.closes.length) {
+      links.push.apply(links, commit.closes.map(this.linkToIssue, this));
     }
-    stream.write(')\n');
-  } else {
-    stream.write(format('%s %s\n', prefix, commit.subject));
+
+    if (links.length) {
+      stream.write('(' + links.join(', ') + ')\n');
+    }
   }
 }
 
